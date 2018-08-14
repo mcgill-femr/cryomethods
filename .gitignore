@@ -1,0 +1,60 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+
+alignLib/SpharmonicKit27/CONV_HYBRID_DISK
+alignLib/SpharmonicKit27/CONV_HYBRID_MEMO
+alignLib/SpharmonicKit27/CONV_SEMI_DISK
+alignLib/SpharmonicKit27/CONV_SEMI_FLY
+alignLib/SpharmonicKit27/CONV_SEMI_MEMO
+alignLib/SpharmonicKit27/FST_precomp2disk
+alignLib/SpharmonicKit27/test_FST_hybrid_disk
+alignLib/SpharmonicKit27/test_FST_hybrid_memo
+alignLib/SpharmonicKit27/test_FST_hybrid_memoX
+alignLib/SpharmonicKit27/test_FST_semi_disk
+alignLib/SpharmonicKit27/test_FST_semi_fly
+alignLib/SpharmonicKit27/test_FST_semi_memo
+alignLib/SpharmonicKit27/test_flt_classic
+alignLib/SpharmonicKit27/test_flt_dhmid
+alignLib/SpharmonicKit27/test_flt_hybrid
+alignLib/SpharmonicKit27/test_naive
+alignLib/SpharmonicKit27/test_semi
+alignLib/SpharmonicKit27/test_stability_naive
+alignLib/frm/swig/frm_wrap.c
+alignLib/frm/swig/swig_frm.py
+
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
