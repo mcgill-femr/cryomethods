@@ -28,7 +28,7 @@ alignLib/SpharmonicKit27/test_semi
 alignLib/SpharmonicKit27/test_stability_naive
 alignLib/frm/swig/frm_wrap.c
 alignLib/frm/swig/swig_frm.py
-
+.idea
 
 # Packages #
 ############
