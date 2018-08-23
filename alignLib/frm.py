@@ -1381,5 +1381,6 @@ def frm_align(vf, wf, vg, wg, b, max_freq, peak_offset=None, mask=None, weights=
 
         # print max_value # for show the convergence of the algorithm
 
-    return max_position, max_orientation, max_value
+    shifts = [x - vf.shape[2]/2 for x in max_position]
+    return max_position, shifts, max_orientation, max_value
 
