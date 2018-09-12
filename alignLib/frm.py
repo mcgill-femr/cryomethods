@@ -154,11 +154,11 @@ def frm_corr(f, g):
     f = np.array(f, dtype='double')
     g = np.array(g, dtype='double')
     
-    b = len(f)**0.5/2
+    b = int(len(f)**0.5/2)
     if b <= 2:
         raise RuntimeError('Bandwidth too small: %d' % b)
     c = np.zeros(16*b**3, dtype='double')
-    
+
     if swig_frm.frm_corr(f, g, c) != 0:
         raise RuntimeError('Something is wrong during FRM!')
     
@@ -211,7 +211,7 @@ def frm_fourier_corr(fr, fi, gr, gi, return_real=False):
     gr = np.array(gr, dtype='double')
     gi = np.array(gi, dtype='double')
     
-    b = len(fr)**0.5/2
+    b = int(len(fr)**0.5/2)
     if b <= 2:
         raise RuntimeError('Bandwidth too small: %d' % b)
     c = np.zeros(16*b**3, dtype='double')
@@ -764,7 +764,7 @@ def sph_correlate_ps(f, mf, g, mg, to_calculate=0):
     mf = np.array(mf, dtype='double')
     g = np.array(g, dtype='double')
     mg = np.array(mg, dtype='double')
-    
+
     numerator = frm_corr(f*mf, g*mg)
 
     if to_calculate == 1: # calculate only the numerator
@@ -823,7 +823,7 @@ def sph_correlate_fourier(fr, fi, mf, gr, gi, mg, to_calculate=0):
         mg = np.array(mg, dtype='double')
     
     mi = np.zeros(mf.shape) # the imag part of the masks, all zero
-    
+
     numerator = frm_fourier_corr(fr*mf, fi*mf, gr*mg, gi*mg)
 
     if to_calculate == 1: # calculate only the numerator
@@ -955,7 +955,9 @@ def frm_correlate(vf, wf, vg, wg, b, max_freq, weights=None, ps=False, denominat
         mg = wg.toSphericalFunc(bw, r)
 
         if ps:
-            corr1, corr2, corr3 = sph_correlate_ps(vol2sf(ff, r, bw), mf, vol2sf(gg, r, bw), mg, to_calculate)
+            vol1 = vol2sf(ff, r, bw)
+            vol2 = vol2sf(gg, r, bw)
+            corr1, corr2, corr3 = sph_correlate_ps(vol1, mf, vol2, mg, to_calculate)
         else:
             vfr, vfi = fvol2sf(vf, r, bw)
             vgr, vgi = fvol2sf(vg, r, bw)
