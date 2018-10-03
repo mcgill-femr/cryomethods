@@ -799,8 +799,11 @@ def save(a, fn, ifExists='ask', zAxisOrder=None,
 
     if ((numints > 0 and numextsec_int > 0) or
         (numfloats > 0 and numextsec_float > 0)):
+        print('pass ((numints > 0 and numextsec_int > 0) or (numfloats > 0 '
+              'and numextsec_float > 0))')
         m.makeExtendedHdr(numints, numfloats,
                           nSecs=max(numextsec_int, numextsec_float))
+        print('m.makeExtendedHdr function passed')
         if numints == 1:
             m.extInts[0:numextsec_int] = N.ravel(extInts)
             m.extInts[numextsec_int:] = 0
