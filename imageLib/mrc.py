@@ -761,7 +761,6 @@ def save(a, fn, ifExists='ask', zAxisOrder=None,
     if hdr is not None:
         m.hdr = initHdrArrayFrom(m.hdr, hdr)
 
-    print('before calcMMM check...before calcMMM check...before calcMMM check')
     if calcMMM:
         wAxis = axisOrderStr(m.hdr).find('w')
         if wAxis < 0:
@@ -777,7 +776,6 @@ def save(a, fn, ifExists='ask', zAxisOrder=None,
                 m.hdr.mm4 = computeMinMax(N.real(a.take((3,), wAxis)))
             if nw >=5:
                 m.hdr.mm5 = computeMinMax(N.real(a.take((4,), wAxis)))
-    print('after calcMMM check...after calcMMM check...after calcMMM check')
 
     if extInts is not None:
         numints = extInts.shape[-1]
@@ -786,8 +784,6 @@ def save(a, fn, ifExists='ask', zAxisOrder=None,
         numints = 0
         numextsec_int = 0
 
-    print('after extInts check...after extInts check...after extInts check')
-
     if extFloats is not None:
         numfloats = extFloats.shape[-1]
         numextsec_float = extFloats.size // numfloats
@@ -795,15 +791,10 @@ def save(a, fn, ifExists='ask', zAxisOrder=None,
         numfloats = 0
         numextsec_float = 0
 
-    print('after extFloats check..after extFloats check..after extFloats check')
-
     if ((numints > 0 and numextsec_int > 0) or
         (numfloats > 0 and numextsec_float > 0)):
-        print('pass ((numints > 0 and numextsec_int > 0) or (numfloats > 0 '
-              'and numextsec_float > 0))')
         m.makeExtendedHdr(numints, numfloats,
                           nSecs=max(numextsec_int, numextsec_float))
-        print('m.makeExtendedHdr function passed')
         if numints == 1:
             m.extInts[0:numextsec_int] = N.ravel(extInts)
             m.extInts[numextsec_int:] = 0
@@ -819,7 +810,6 @@ def save(a, fn, ifExists='ask', zAxisOrder=None,
                 N.reshape(extFloats, (numextsec_float, numfloats)))
             m.extFloats[numextsec_float:, 0:numfloats] = 0.0
 
-    print('before hdrEval check...before hdrEval check...before hdrEval check')
     if hdrEval:
         fr = sys._getframe(1)
         loc = {'hdr':m.hdr}
