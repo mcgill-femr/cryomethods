@@ -25,6 +25,7 @@
 # *
 # **************************************************************************
 import numpy as np
+import math as math
 
 def getFourierTransform(map):
     return np.fft.fftshift(np.fft.fftn(map))
@@ -128,3 +129,107 @@ def correctAnisotropyHalves(mapNp1, mapNp2, weight, q, minFreq, maxFreq):
     finalMap2 = getFinalMap(mapFt2)
 
     return finalMap1, finalMap2
+
+
+def shift(u, size):
+    u0 = math.floor(size / 2) + 1
+    k = u - u0
+    return k
+
+
+def getMeshgridMap(map):
+    xSize, ySize, zSize = map.shape
+    x = np.linspace(1, xSize, xSize)
+    y = np.linspace(1, ySize, ySize)
+    z = np.linspace(1, zSize, zSize)
+    u, v, w  = np.meshgrid(x,y,z)
+    return u, v, w
+
+
+def spiralFilter(map):
+
+    u, v, w  = getMeshgridMap(map)
+
+    xSize, ySize, zSize = map.shape
+    h = shift(u, xSize) + 1j * shift(v, ySize) - shift(w, zSize)
+    H = h / abs(h)
+    H[np.isnan(H)] = 0
+    return H
+
+
+def localRestoration(map, mask, maxRes, threshold):
+    import math as mt
+    """
+    maxRes between 1 and map_size / 2(Nyquist)
+    threshold signficance in the comparision with noise.Default 0.9
+    """
+    xSize, ySize, zSize = map.shape
+
+
+    M = map * 0;
+    W = map * 0;
+    S = 3.0;
+
+    # We create necessary stuff for the bank of filters once:
+    u, v, w = getMeshgridMap(map)
+
+    # Temporal variables
+    x = shift(u, xSize)
+    y = shift(v, ySize)
+    z = shift(w, zSize)
+
+    def cart2Sph(x, y, z):
+        r = sqrt(x*x + y*y + z*z)
+        theta = np.arccos(z/r)*180/np.pi  #to degrees
+        phi = atan2(y,x)*180/ pi
+        return [r,theta,phi]
+
+
+
+
+    [Theta Phi Radial] = cart2sph(x, y, z)
+
+    # Gaussian DC filter with sigma=0.01
+    Hr = 1 - exp(-(u. ^ 2 + v. ^ 2 + w. ^ 2) / (2 * 0.05 ^ 2));
+
+    # We obtain the Spiral Filter once:
+    Hs = spiralFilter(map)
+     # We do one FFT of the map
+    C = fftn(map);
+
+    parfor
+    i = 1:1:maxRes
+
+    # Actual filter
+    H = exp(-((Radial - i). ^ 2) / (2 * S ^ 2)); % Annular
+    filter
+    with radius=R and sigma=S
+    H = Hr. * H;
+
+    CH = C. * ifftshift(H);
+
+    ch = ifftn(CH);
+    CH = CH. * ifftshift(Hs);
+    s = abs(conj(ifftn(CH)));
+
+    % normalized
+    igram
+    cn = cos(atan2(s, ch));
+    % modulation
+    m = abs(ch + 1
+    i * s);
+    % m = imgaussfilt3(m, i, 'FilterSize', 2 * floor(i / 2) + 1);
+
+    q = quantile(m(~mask), threshold);
+    m = double(m >= q);
+
+    M = M + (cn. * m);
+    W = W + (m);
+
+    end
+
+    end
+
+
+
+
