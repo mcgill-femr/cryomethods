@@ -28,10 +28,11 @@ def compile(includePath=None, libPath=None):
     to_find_libs["libpython" + py_version + lib_suffix] = ""
 
     # get the HOME directory and try to deduce the Numpy position
-    home_dir = os.path.join(os.environ.get('SCIPION_HOME'), 'software')
+    scpionHome = os.environ.get('SCIPION_HOME')
+    homeDir = '' if scpionHome is None else os.path.join(scpionHome, 'software')
     try:
         import numpy
-        numpy_search_path = os.path.dirname(
+        numpySearchPath = os.path.dirname(
             numpy.__file__) + "/core/include/numpy/"
     except:
         pass
@@ -40,7 +41,7 @@ def compile(includePath=None, libPath=None):
     print "Search include files ..."
     if includePath is None:
         includePath = []
-    includePath += ["/usr/include/", home_dir + "/include/", numpy_search_path]
+    includePath += ["/usr/include/", homeDir + "/include/", numpySearchPath]
     for path in includePath:
         for header_file in to_find_headers:
             if to_find_headers[header_file] == "":
@@ -73,7 +74,7 @@ def compile(includePath=None, libPath=None):
     if libPath is None:
         libPath = []
     libPath += ["/usr/lib/", "/usr/lib64/",
-                home_dir + "/lib/", home_dir + "/lib64/"]
+                homeDir + "/lib/", homeDir + "/lib64/"]
     for path in libPath:
         for lib_file in to_find_libs:
             if to_find_libs[lib_file] == "":
@@ -105,27 +106,27 @@ def compile(includePath=None, libPath=None):
 
     try:
         # compile
-        os.system("cd SpharmonicKit27 && make all")
-        os.system("cd frm/src/ && make lib")
-        os.system("cd frm/swig/ && ./mkswig.sh")
+        os.system("cd alignLib/SpharmonicKit27 && make all")
+        os.system("cd alignLib/frm/src/ && make lib")
+        os.system("cd alignLib/frm/swig/ && ./mkswig.sh")
 
         # check if the library is successfully compiled
-        if not os.path.isfile('frm/swig/_swig_frm.so'):
+        if not os.path.isfile('alignLib/frm/swig/_swig_frm.so'):
             raise Exception('Failed! Please check the compilation flags!')
 
-        # done, get the paths for setting up
-        current_path = os.getcwd()
-        parent_path = os.path.split(current_path)[0]
-        ld_library_path = to_find_libs[
-                              "libfftw3" + lib_suffix] + ':' + current_path + '/SpharmonicKit27/' + ':' + current_path + '/frm/swig/'
-        python_path = parent_path + ':' + current_path + '/frm/swig/'
-        print
+        # # done, get the paths for setting up
+        # current_path = os.getcwd()
+        # parent_path = os.path.split(current_path)[0]
+        # ld_library_path = to_find_libs[
+        #                       "libfftw3" + lib_suffix] + ':' + current_path + '/SpharmonicKit27/' + ':' + current_path + '/frm/swig/'
+        # python_path = parent_path + ':' + current_path + '/frm/swig/'
+        # print
         print "Successfully finished!"
-        print "In order to use this library, you might need to add the following settings into your enviroment:"
-        print "LD_LIBRARY_PATH/DYLD_LIBRARY_PATH =", ld_library_path
-        print "PYTHONPATH =", python_path
-        print
-        return ld_library_path, python_path
+        # print "In order to use this library, you might need to add the following settings into your enviroment:"
+        # print "LD_LIBRARY_PATH/DYLD_LIBRARY_PATH =", ld_library_path
+        # print "PYTHONPATH =", python_path
+        # print
+        # return ld_library_path, python_path
     except:
         print "Failed!"
         return None, None
