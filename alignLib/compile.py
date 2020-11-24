@@ -35,10 +35,10 @@ def compile(includePath=None, libPath=None):
         numpySearchPath = os.path.dirname(
             numpy.__file__) + "/core/include/numpy/"
     except:
-        pass
+        print("No numpy found. Please install numpy.")
 
     # append some common dirs in the end to search
-    print "Search include files ..."
+    print("Search include files ...")
     if includePath is None:
         includePath = []
     includePath += ["/usr/include/", homeDir + "/include/", numpySearchPath]
@@ -46,7 +46,7 @@ def compile(includePath=None, libPath=None):
         for header_file in to_find_headers:
             if to_find_headers[header_file] == "":
                 dir = find_file(header_file, path)
-                print 'Dir: ', dir, header_file, path
+                print('Dir: ', dir, header_file, path)
                 if dir:
                     to_find_headers[header_file] = dir
         all_found = True
@@ -70,7 +70,7 @@ def compile(includePath=None, libPath=None):
             "Numpy header file arrayobject.h is in the wrong place!")
 
     # append some common dirs in the end to search
-    print "Search dynamic library files ..."
+    print("Search dynamic library files ...")
     if libPath is None:
         libPath = []
     libPath += ["/usr/lib/", "/usr/lib64/",
@@ -121,14 +121,14 @@ def compile(includePath=None, libPath=None):
         #                       "libfftw3" + lib_suffix] + ':' + current_path + '/SpharmonicKit27/' + ':' + current_path + '/frm/swig/'
         # python_path = parent_path + ':' + current_path + '/frm/swig/'
         # print
-        print "Successfully finished!"
+        print("Successfully finished!")
         # print "In order to use this library, you might need to add the following settings into your enviroment:"
         # print "LD_LIBRARY_PATH/DYLD_LIBRARY_PATH =", ld_library_path
         # print "PYTHONPATH =", python_path
         # print
         # return ld_library_path, python_path
     except:
-        print "Failed!"
+        print("Failed!")
         return None, None
 
 
