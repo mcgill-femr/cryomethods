@@ -32,7 +32,7 @@ class AngularConstraint(PyTomClass):
 
             c.fromXML(xml_obj)
             return c
-        except Exception, e:
+        except Exception as e:
             raise e
 
 
@@ -79,7 +79,7 @@ class FixedAngleConstraint(AngularConstraint):
             self.psi = float(xml_obj.get('Psi'))
             self.the = float(xml_obj.get('Theta'))
             self.nearby = float(xml_obj.get('Nearby'))
-        except Exception, e:
+        except Exception as e:
             raise e
 
 
@@ -150,7 +150,7 @@ class FixedAxisConstraint(AngularConstraint):
             self.y = float(xml_obj.get('Y'))
             self.z = float(xml_obj.get('Z'))
             self.nearby = float(xml_obj.get('Nearby'))
-        except Exception, e:
+        except Exception as e:
             raise e
 
 
@@ -167,7 +167,7 @@ def frm_find_topn_constrained_angles_interp(corr, n=5, dist=3.0, constraint=None
 
     # when the angular constraint conflicts the dist
     if constraint.__class__ == FixedAngleConstraint and float(dist+1)/b*180 > constraint.nearby:
-        print 'Warning: angular distance cut is overwritten by angular constraint.'
+        print('Warning: angular distance cut is overwritten by angular constraint.')
         from math import floor
         dist = floor(constraint.nearby*b/180.)-1
         if dist < 1.:

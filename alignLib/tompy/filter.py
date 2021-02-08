@@ -243,8 +243,8 @@ class SingleTiltWedge(Wedge):
         from math import pi, sin, cos
         res = []
         
-        for j in xrange(2*bw):
-            for k in xrange(2*bw):
+        for j in range(2*bw):
+            for k in range(2*bw):
                 the = pi*(2*j+1)/(4*bw) # (0,pi)
                 phi = pi*k/bw # [0,2*pi)
                 

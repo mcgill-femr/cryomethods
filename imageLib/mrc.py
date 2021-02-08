@@ -133,10 +133,7 @@ import sys
 import os
 # Python 3 renamed __builtin__ to builtins.  Work around that without using
 # from __future__ so that this will work with older versions of Python 2.
-try:
-    import __builtin__ as builtins
-except ImportError:
-    import builtins
+import builtins
 import string
 import tempfile
 import weakref
