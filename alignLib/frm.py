@@ -5,8 +5,8 @@ Created on Sep 16, 2011
 '''
 
 import numpy as np
-import swig_frm # the path of this swig module should be set correctly in $PYTHONPATH
-from vol2sf import vol2sf, fvol2sf
+from . import swig_frm # the path of this swig module should be set correctly in $PYTHONPATH
+from .vol2sf import vol2sf, fvol2sf
 
 
 def enlarge2(corr):
@@ -64,7 +64,7 @@ def create_wedge_sf(start, end, b, valIn=1.0, valOut=0.0):
         for k in range(2*b):
             the = pi*(2*j+1)/(4*b) # (0,pi)
             phi = pi*k/b # [0,2*pi)
-
+            
             x = cos(phi)*sin(the)
             z = cos(the)
             
@@ -151,9 +151,10 @@ def frm_corr(f, g):
     -------
     numpy.array
     """
+
     f = np.array(f, dtype='double')
     g = np.array(g, dtype='double')
-    
+
     b = int(len(f)**0.5/2)
     if b <= 2:
         raise RuntimeError('Bandwidth too small: %d' % b)
@@ -161,10 +162,10 @@ def frm_corr(f, g):
 
     if swig_frm.frm_corr(f, g, c) != 0:
         raise RuntimeError('Something is wrong during FRM!')
-    
+
     c = c[::2] # retrieve the real part only
     c = np.reshape(c, (2*b, 2*b, 2*b), order='C')
-    
+
     return c
 
 def frm_ncorr(f, g):
@@ -661,7 +662,7 @@ def frm_find_topn_angles_interp(corr, n=5, dist=3.0):
     -------
     List: [(phi, psi, theta, peak_value), ...]
     """
-    from tompy.tools import rotation_distance
+    from .tompy.tools import rotation_distance
 
     b = corr.shape[0]/2
     
@@ -715,7 +716,7 @@ def frm_find_topn_angles_interp2(corr, n=5, dist=3.0):
 
     peaks = np.zeros((n*4,), dtype='double')
     
-    if swig_frm.find_topn_angles(corr, b, peaks, dist) != 0:
+    if swig_frm.find_topn_angles(corr, int(b), peaks, dist) != 0:
         raise RuntimeError('Error happens in finding peaks!')
     
     peaks = peaks.reshape((n, 4))
@@ -823,7 +824,7 @@ def sph_correlate_fourier(fr, fi, mf, gr, gi, mg, to_calculate=0):
         mg = np.array(mg, dtype='double')
     
     mi = np.zeros(mf.shape) # the imag part of the masks, all zero
-
+    
     numerator = frm_fourier_corr(fr*mf, fi*mf, gr*mg, gi*mg)
 
     if to_calculate == 1: # calculate only the numerator
@@ -924,7 +925,8 @@ def frm_correlate(vf, wf, vg, wg, b, max_freq, weights=None, ps=False, denominat
     if not weights: # weights, not used yet
         weights = [1 for i in range(max_freq)]
 
-    from tompy.transform import rfft, fftshift, ifftshift, fourier_reduced2full
+    from .tompy.transform import (rfft, fftshift, ifftshift,
+                                          fourier_reduced2full)
 
     # IMPORTANT!!! Should firstly do the IFFTSHIFT on the volume data (NOT FFTSHIFT since for odd-sized data it matters!),
     # and then followed by the FFT.
@@ -955,14 +957,12 @@ def frm_correlate(vf, wf, vg, wg, b, max_freq, weights=None, ps=False, denominat
         mg = wg.toSphericalFunc(bw, r)
 
         if ps:
-            vol1 = vol2sf(ff, r, bw)
-            vol2 = vol2sf(gg, r, bw)
-            corr1, corr2, corr3 = sph_correlate_ps(vol1, mf, vol2, mg, to_calculate)
+            corr1, corr2, corr3 = sph_correlate_ps(vol2sf(ff, r, bw), mf, vol2sf(gg, r, bw), mg, to_calculate)
         else:
             vfr, vfi = fvol2sf(vf, r, bw)
             vgr, vgi = fvol2sf(vg, r, bw)
             corr1, corr2, corr3 = sph_correlate_fourier(vfr, vfi, mf, vgr, vgi, mg, to_calculate)
-        
+
         if _last_bw != bw: # size is different, have to do enlarge
             if numerator is None:
                 numerator = np.zeros((2*bw, 2*bw, 2*bw), dtype='double')
@@ -1031,7 +1031,7 @@ def frm_correlate_prepare(vf, wf, vg, wg, b, max_freq):
     -------
     (svf, swf, svg, swg)
     """
-    from tompy.transform import rfft, fftshift, ifftshift, fourier_reduced2full
+    from .tompy.transform import rfft, fftshift, ifftshift, fourier_reduced2full
 
     # IMPORTANT!!! Should firstly do the IFFTSHIFT on the volume data (NOT FFTSHIFT since for odd-sized data it matters!),
     # and then followed by the FFT.
@@ -1091,7 +1091,7 @@ def frm_fourier_shift_sf(svf, max_freq, shape, dx, dy, dz):
     -------
     Dictionary. A set of shifted (complex) spherical functions in Fourier space.
     """
-    from vol2sf import fourier_sf_shift
+    from .vol2sf import fourier_sf_shift
     assert len(svf) == max_freq
 
     res = {}
@@ -1176,7 +1176,7 @@ def frm_correlate_cache(vf, wf, vg, wg, b, max_freq, weights=None, ps=False, den
         vgi = vg[r][1]
         
         corr1, corr2, corr3 = sph_correlate_fourier(vfr, vfi, mf, vgr, vgi, mg, to_calculate)
-        
+
         if _last_bw != bw: # size is different, have to do enlarge
             if numerator is None:
                 numerator = np.zeros((2*bw, 2*bw, 2*bw), dtype='double')
@@ -1308,7 +1308,6 @@ def frm_align(vf, wf, vg, wg, b, max_freq, peak_offset=None, mask=None, weights=
 
         return position, orientation, max_value
 
-
     # iteratively refine the position & orientation
     from tompy.tools import euclidian_distance
     max_iter = 10 # maximal number of iterations
@@ -1359,7 +1358,7 @@ def frm_align(vf, wf, vg, wg, b, max_freq, peak_offset=None, mask=None, weights=
             # the speedup version
             if svf is None:
                 svf, swf, svg, swg = frm_correlate_prepare(vf, wf, vg, wg, b, max_freq)
-            
+
             # change svf according to the shift
             dx = -lm_pos[0]+vf.shape[0]/2
             dy = -lm_pos[1]+vf.shape[1]/2
@@ -1374,7 +1373,7 @@ def frm_align(vf, wf, vg, wg, b, max_freq, peak_offset=None, mask=None, weights=
             # score = frm_correlate(vf2, wf, vg, wg, b, max_freq, weights, False, denominator1, denominator2, True)
             
             orientation, val = frm_find_best_angle_interp(score)
-            
+
         else: # no converge after the specified iteration, still get the best result as we can
             if lm_value > max_value:
                 max_position = lm_pos

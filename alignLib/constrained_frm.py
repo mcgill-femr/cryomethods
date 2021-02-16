@@ -33,7 +33,8 @@ class AngularConstraint(PyTomClass):
             c.fromXML(xml_obj)
             return c
         except Exception as e:
-            raise e
+            print("Error: ", e)
+            raise
 
 
 class FixedAngleConstraint(AngularConstraint):
@@ -59,7 +60,7 @@ class FixedAngleConstraint(AngularConstraint):
             cv = np.zeros((8*bw**3,), dtype='double')
 
             # the naming is inconsistent with the low-level c, but the result is right. To be changed.
-            swig_frm.get_constraint_vol(cv, bw, self.psi*pi/180, self.phi*pi/180, self.the*pi/180, self.nearby*pi/180)
+            get_constraint_vol(cv, bw, self.psi*pi/180, self.phi*pi/180, self.the*pi/180, self.nearby*pi/180)
 
             self._cv = cv.reshape(2*bw, 2*bw, 2*bw)
             self._bw = bw
@@ -126,7 +127,7 @@ class FixedAxisConstraint(AngularConstraint):
             from pytom.angles.angleFnc import axisAngleToZXZ
             for axis in axes:
                 axis = [axis[0,0], axis[0,1], axis[0,2]]
-                for ang in xrange(0, 360, 2):
+                for ang in range(0, 360, 2):
                     euler_ang = axisAngleToZXZ(axis, ang)
                     i,j,k = frm_angle2idx(bw, euler_ang.getPhi(), euler_ang.getPsi(), euler_ang.getTheta())
                     # set the cv
@@ -178,7 +179,8 @@ def frm_find_topn_constrained_angles_interp(corr, n=5, dist=3.0, constraint=None
     return frm_find_topn_angles_interp(corr, n, dist)
 
 
-def frm_constrained_align(vf, wf, vg, wg, b, max_freq, peak_offset=None, mask=None, constraint=None, weights=None, position=None, num_seeds=5):
+def frm_constrained_align(vf, wf, vg, wg, b, max_freq, peak_offset=None, mask=None, constraint=None, weights=None, position=None, num_seeds=5,
+                          pytom_volume=None):
     """Find the best alignment (translation & rotation) of volume vg (reference) to match vf.
     For details, please check the paper.
 
