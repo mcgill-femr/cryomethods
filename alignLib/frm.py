@@ -5,8 +5,8 @@ Created on Sep 16, 2011
 '''
 
 import numpy as np
-from . import swig_frm # the path of this swig module should be set correctly in $PYTHONPATH
-from .vol2sf import vol2sf, fvol2sf
+import swig_frm # the path of this swig module should be set correctly in $PYTHONPATH
+from vol2sf import vol2sf, fvol2sf
 
 
 def enlarge2(corr):
@@ -662,7 +662,7 @@ def frm_find_topn_angles_interp(corr, n=5, dist=3.0):
     -------
     List: [(phi, psi, theta, peak_value), ...]
     """
-    from .tompy.tools import rotation_distance
+    from tompy.tools import rotation_distance
 
     b = corr.shape[0]/2
     
@@ -925,7 +925,7 @@ def frm_correlate(vf, wf, vg, wg, b, max_freq, weights=None, ps=False, denominat
     if not weights: # weights, not used yet
         weights = [1 for i in range(max_freq)]
 
-    from .tompy.transform import (rfft, fftshift, ifftshift,
+    from tompy.transform import (rfft, fftshift, ifftshift,
                                           fourier_reduced2full)
 
     # IMPORTANT!!! Should firstly do the IFFTSHIFT on the volume data (NOT FFTSHIFT since for odd-sized data it matters!),
@@ -1031,7 +1031,7 @@ def frm_correlate_prepare(vf, wf, vg, wg, b, max_freq):
     -------
     (svf, swf, svg, swg)
     """
-    from .tompy.transform import rfft, fftshift, ifftshift, fourier_reduced2full
+    from tompy.transform import rfft, fftshift, ifftshift, fourier_reduced2full
 
     # IMPORTANT!!! Should firstly do the IFFTSHIFT on the volume data (NOT FFTSHIFT since for odd-sized data it matters!),
     # and then followed by the FFT.
@@ -1091,7 +1091,7 @@ def frm_fourier_shift_sf(svf, max_freq, shape, dx, dy, dz):
     -------
     Dictionary. A set of shifted (complex) spherical functions in Fourier space.
     """
-    from .vol2sf import fourier_sf_shift
+    from vol2sf import fourier_sf_shift
     assert len(svf) == max_freq
 
     res = {}
