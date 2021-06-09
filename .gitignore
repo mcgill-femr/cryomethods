@@ -58,3 +58,4 @@ alignLib/frm/swig/swig_frm.py
 .Trashes
 ehthumbs.db
 Thumbs.db
+__pycache__/
